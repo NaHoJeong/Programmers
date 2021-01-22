@@ -1,0 +1,36 @@
+// [3차] 압축(lv.2)
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> solution(string msg) {
+    vector<int> answer;
+    vector<string> new_char(27, " "); // 새로 만들 사전(나의 사전)
+    string alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // 모든 알파벳
+    for(int i = 1 ; i < 27 ; i++)
+        new_char[i] = alpha[i - 1];
+
+    string word = ""; // 새로 만들 단어
+    int idx = 0;
+    for(int i = 0 ; i < msg.length() ; i++)
+    {
+        idx = 0;
+        word = msg[i];
+        for(int j = 0 ; j < new_char.size() ; j++)
+        {
+        	새로 만들 단어가 나의 사전에 있으면 단어 추가
+            while(word == new_char[j])
+            {
+                word += msg[i+1];
+                i++;
+                idx = j; // 사전에 있다면 해당 인덱스 저장
+            }
+        }
+        i--; // 사전에 없다면 이전에 더해진 단어 제거
+        new_char.push_back(word);
+        answer.push_back(idx);
+    }
+
+    return answer;
+}

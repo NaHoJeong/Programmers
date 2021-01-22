@@ -1,4 +1,4 @@
-// 프로그래머스 레벨 3, 하노이의 탑
+// 프로그래머스 하노이의 탑, lv 3
 
 #include <string>
 #include <vector>

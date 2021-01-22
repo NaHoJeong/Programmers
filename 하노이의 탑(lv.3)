@@ -1,4 +1,5 @@
 // 프로그래머스 하노이의 탑, lv 3
+// 재귀 함수 이용
 
 #include <string>
 #include <vector>

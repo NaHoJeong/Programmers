@@ -1,3 +1,3 @@
 # Programmers
 
-My Programmers solution code.. (연습중..)
+My Programmers solution code... (연습중...)

@@ -34,3 +34,4 @@ vector<vector<int>> solution(int n) {
     hanoi(n, 1, 3, 2); // 주어진 원판의 개수, 시작 탑, 목적지 탑, 여유공간
     return answer;
 }
+

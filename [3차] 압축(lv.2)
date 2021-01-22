@@ -1,5 +1,4 @@
 // [3차] 압축(lv.2)
-// 재귀 함수를 통한 풀이
 
 #include <string>
 #include <vector>

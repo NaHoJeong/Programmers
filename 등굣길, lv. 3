@@ -1,0 +1,40 @@
+// 등굣길, lv. 3
+// DP
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int m, int n, vector<vector<int>> puddles) {
+    int answer = 0;
+    vector<vector<int>> cnt(n + 1, vector<int>(m + 1, 1)); // 배열과 그림을 맞추기 위해, cnt의 값은 해당 위치에 도달할 수 있는 경우의 수
+    
+    // 물웅덩이가 있는 곳은 지나갈 수 없음(0으로 세팅)
+    if(puddles[0].size() > 0)
+    {
+        for(int i = 0 ; i < puddles.size() ; i++)
+            cnt[puddles[i][1]][puddles[i][0]] = 0;   
+    }
+    
+    // (1,1)부터 시작하므로 0인 부분 0으로 세팅
+    for(int i = 0 ; i < m+1 ; i++)
+        cnt[0][i] = 0;
+    for(int i = 0 ; i < n+1 ; i++)
+        cnt[i][0] = 0;
+    
+    // 현재 위치의 경우의 수 = 위 위치의 경우의 수 + 현재의 왼쪽의 경우의 수
+    for(int i = 1 ; i < n + 1 ; i++)
+    {
+        for(int j = 1 ; j < m + 1 ; j++)
+        {
+            if(cnt[i][j] == 0)
+                continue;
+            cnt[i][j] = (cnt[i-1][j] + cnt[i][j-1])%1000000007;
+            
+        }
+    }
+    
+    answer = cnt[n][m]%1000000007;
+    return answer;
+}

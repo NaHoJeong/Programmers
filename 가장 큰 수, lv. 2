@@ -1,0 +1,39 @@
+// 가장 큰 수, lv. 2
+// 정렬
+
+#include <string>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+// 2개 씩 비교하여 정렬될 때, 두 숫자의 조합을 비교
+// ex, 2와 3 비교할 때, 23과 32를 비교
+bool cmp(int a, int b)
+{
+    string s_a = to_string(a);
+    string s_b = to_string(b);
+
+    string a1 = s_a + s_b;
+    string b1 = s_b + s_a;
+    int num_a = stoi(a1);
+    int num_b = stoi(b1);
+    
+    if(num_a > num_b)
+        return true;
+    return false;
+}
+
+string solution(vector<int> numbers) {
+    string answer = "";
+   
+    sort(numbers.begin(), numbers.end(), cmp);
+    
+    if(numbers[0] == 0)
+        return "0";
+    
+    for(int i = 0 ; i < numbers.size() ; i++)
+        answer += to_string(numbers[i]);
+        
+    return answer;
+}

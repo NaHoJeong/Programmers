@@ -1,0 +1,122 @@
+// 이중우선순위큐, lv. 3
+// 우선순위 큐
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+vector<int> solution(vector<string> operations) {
+    vector<int> answer;
+    
+    string temp = "";
+    int num, cnt, chk = 0;
+    priority_queue<int> pq; // 내림차순
+    priority_queue<int, vector<int>, greater<int>> pq_rev; // 오름차순
+    
+    int cnt_i, cnt_d = 0;
+    for(int i = 0 ; i < operations.size() ; i++)
+    {
+        // I면 값 추가,  D면 값 제거
+        if(operations[i][0] == 'I')
+        {
+            cnt_i++;
+            chk++;
+            cnt = operations[i].length();
+            temp = operations[i].substr(2, cnt - 2);
+            num = stoi(temp);
+            pq.push(num);
+            pq_rev.push(num);
+        }
+        else
+        {
+            if(chk == 0)
+                continue;
+            else
+            {
+                // -면 최솟값 빼기 --> pq_rev에서 pop
+                if(operations[i][2] == '-')
+                    pq_rev.pop();
+                else
+                    pq.pop();
+                chk--;
+            }
+            
+            cnt_d++; // 뺀 것의 개수를 센 후 우선순위 큐 안의 개수와 같으면 모두 pop
+            if(cnt_i == cnt_d)
+            {
+                while(!pq.empty()) pq.pop();
+                while(!pq_rev.empty()) pq_rev.pop();
+            }
+        }
+    }
+    if(chk <= 1)
+    {
+        answer.push_back(0);
+        answer.push_back(0);
+        return answer;
+    }
+    else
+    {
+        answer.push_back(pq.top());
+        answer.push_back(pq_rev.top());
+    }
+    /*
+    // 두번째 풀이
+    string temp = "";
+    int num = 0;
+    int cnt = 0;
+    
+    for(int i = 0 ; i < operations.size() ; i++)
+    {
+        // I면 값 추가,  D면 값 제거
+        if(operations[i][0] == 'I')
+        {
+            cnt = operations[i].length();
+            temp = operations[i].substr(2, cnt - 2);
+            num = stoi(temp);
+            pq.push(num);
+        }
+        else
+        {
+            if(pq.empty())
+                continue;
+            // 3번째 값이 -면 최솟값, 아니면 최댓값 삭제
+            if(operations[i][2] == '-')
+            {
+                while(!pq.empty())
+                {
+                    pq_temp.push(pq.top());
+                    pq.pop();
+                }
+                pq_temp.pop();
+                while(!pq_temp.empty())
+                {
+                    pq.push(pq_temp.top());
+                    pq_temp.pop();
+                }
+            }
+            else
+                pq.pop();
+        }
+    }
+    
+    if(pq.size() == 0)
+    {
+        answer.push_back(0);   
+        answer.push_back(0);
+        return answer;
+    }
+    
+    answer.push_back(pq.top());
+    while(!pq.empty())
+    {
+        pq.pop();
+        if(pq.size() == 1)
+            answer.push_back(pq.top());
+    }
+    */
+    return answer;
+}

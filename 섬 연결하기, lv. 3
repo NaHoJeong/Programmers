@@ -1,0 +1,71 @@
+// 섬 연결하기, lv. 3
+// 크루스칼 알고리즘
+  // 비용이 최소인 부분을 위주로 --> 연결된 노드끼리 사이클이 돌지 않게하여 최소 비용 도출
+  
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+#define INF 1000000
+using namespace std;
+
+// 연결된 섬 사이의 비용을 나타내는 cost 벡터(섬1, 섬2, 비용)에서 비용을 기준으로 정렬
+bool cmp(vector<int> a, vector<int> b)
+{
+    int temp_a = a[2];
+    int temp_b = b[2];
+    
+    if(a[2] < b[2])
+        return true;
+    return false;
+}
+int solution(int n, vector<vector<int>> costs) {
+    int answer = 0;
+    vector<int> visit(n, 0); // 모든 섬에 대한 방문 여부
+    vector<int> connect(n, 0); // 섬이 어느 부분에 연결되어 있는지(연결된 섬들을 그룹지어 줄 때, 해당 그룹의 대표 수)
+    sort(costs.begin(), costs.end(), cmp); // 섬과 섬 사이의 비용을 기준으로 오름차순
+    
+    int min = 0;
+    int temp = 0;
+    for(int i = 0 ; i < costs.size() ; i++)
+    {
+        // 두 개의 섬 중 적어도 하나는 방문하지 않았을 경우
+        if(visit[costs[i][0]] == 0 || visit[costs[i][1]] == 0)
+        {
+            if(visit[costs[i][0]] == 0 && visit[costs[i][1]] == 0) // 두 개의 섬 모두 방문 X
+            {
+                // 두 개의 섬에 해당하는 값(둘 중 작은 값 --> 어떠한 값이든 상관 없이 연결된 섬의 대표 숫자
+                // 두 개의 인덱스 중 작은 인덱스를 대표 숫자로 표현
+                min = costs[i][0]; 
+                if(costs[i][0] > costs[i][1])
+                    min = costs[i][1];
+                connect[costs[i][0]] = min;
+                connect[costs[i][1]] = min;
+            }
+            // 두 개의 섬 중 한 개만 방문, 한 개는 방문 X
+            else if(visit[costs[i][0]] == 0 && visit[costs[i][1]] == 1)
+                connect[costs[i][0]] = connect[costs[i][1]]; // 연결되지 않은 섬을 연결된 섬의 그룹으로
+            else
+                connect[costs[i][1]] = connect[costs[i][0]];
+            visit[costs[i][0]] = 1;
+            visit[costs[i][1]] = 1;
+            answer += costs[i][2];
+        }
+        // 두 섬 모두 연결되어 있을 때, 한 그룹의 대표 숫자로 연결
+        else
+        {
+            if(connect[costs[i][0]] == connect[costs[i][1]]) // 두 섬이 같은 그룹일 경우
+                continue;
+            else // 두 섬이 다른 그룹일 경우
+            {
+                answer += costs[i][2];
+                temp = connect[costs[i][1]];
+                for(int j = 0 ; j < n ; j++)
+                    if(connect[j] == temp)
+                        connect[j] = connect[costs[i][0]];
+            }
+        }
+    }
+    
+    return answer;
+}

@@ -1,0 +1,74 @@
+// 단어 변환, lv. 3
+// DFS
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> ans; // 정답의 후보
+int dfs(string begin, string target, vector<string> words, vector<int> visit, int cnt)
+{
+    // 다음 들어오는 단어가 target 단어일 경우
+    if(begin == target)
+    {
+        ans.push_back(cnt);
+        return cnt;   
+    }
+    
+    // 들어온 단어와 다음 단어가 한 글자 차이일 경우 탐색, 아니면 탐색 X
+    int diff_cnt = 0; // 단어 사이의 틀린 글자 수
+    for(int i = 0 ; i < words.size() ; i++)
+    {
+        diff_cnt = 0;
+        if(visit[i] == 0)
+        {
+            for(int j = 0 ; j < begin.length() ; j++)
+            {
+                if(begin[j] == words[i][j])
+                    continue;
+                else
+                    diff_cnt++;
+                
+                // 2개 이상의 글자가 다르면 break
+                if(diff_cnt == 2)
+                    break;
+            }
+            
+            // 한 글자가 다르면 dfs를 이용해 
+            if(diff_cnt == 1)
+            {
+                visit[i] = 1;
+                dfs(words[i], target, words, visit, cnt + 1);
+                visit[i] = 0;
+            }
+        }
+    }
+    return 0;
+}
+
+int solution(string begin, string target, vector<string> words) {
+    int answer = 100;
+    vector<int> visit(words.size(), 0); // 모든 단어의 방문 여부
+    
+    bool chk = false; // target이 후보 단어들 중에 있는 지 --> 없다면 0 리턴
+    for(int i = 0 ; i < words.size() ; i++)
+    {
+        if(words[i] == target)
+        {
+            chk = true;
+            break;
+        }           
+    }
+    if(chk == false)
+        return 0;
+    
+    dfs(begin, target, words, visit, 0); // dfs를 이용항 
+    
+    // 정답의 후보들 중 가장 낮은 수를 answer로
+    for(int i = 0 ; i < ans.size() ; i++)
+        if(answer > ans[i])
+            answer = ans[i];
+    
+    return answer;
+}

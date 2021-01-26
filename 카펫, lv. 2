@@ -1,0 +1,31 @@
+// 카펫, lv. 2
+// 완전 탐색
+
+#include <string>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+vector<int> solution(int brown, int yellow) {
+    vector<int> answer;
+    
+    int sum = brown + yellow; // 브라운과 노란색의 총 합은 카펫의 총 격자 수
+    int temp = 0;
+    
+    // 가로 X 세로 = sum이 되는 것(정답의 후보군)을 탐색 후 정답인지 확인
+    for(int i = 1 ; i <= sqrt(sum) ; i++)
+    {
+        if(sum%i == 0) // 정답의 후보군
+        {
+            if((i - 2) * (sum/i-2) == yellow) // 정답인지 
+            {
+                answer.push_back(sum/i);
+                answer.push_back(i);
+                break;
+            }
+        }
+    }
+    
+    return answer;
+}

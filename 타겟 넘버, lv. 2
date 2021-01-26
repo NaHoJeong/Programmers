@@ -1,0 +1,49 @@
+// 타겟 넘버, lv. 2
+// DFS
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int answer = 0;
+int dfs(vector<int> numbers, int target, int start, int sum)
+{
+    // 현재의 인덱스(순서)
+    // start가 numbers 사이즈라는 말은 모두 다 탐색했다는 뜻
+    if(start == numbers.size())
+    {
+        if(sum == target)
+            answer++;
+        return 0;
+    }
+    
+    // 기존의 start는 변경 X, dfs에 들어가는 start는 +1, sum도 마찬가지
+    dfs(numbers, target, start + 1, sum + numbers[start]); // 더하기로 탐색
+    dfs(numbers, target, start + 1, sum - numbers[start]); // 빼기로 탐색
+    
+    /*
+    sum += numbers[start];
+    start++;
+    dfs(numbers, target, start, sum); // 더한 것으로 탐색
+    start--;
+    sum -= numbers[start];
+    
+    sum -= numbers[start];
+    start++;
+    dfs(numbers, target, start, sum); // 뺀 것으로 탐색
+    start--;
+    sum += numbers[start];
+    */
+    
+    return 0;
+}
+
+int solution(vector<int> numbers, int target) {
+    answer = 0;
+    
+    // dfs 사용
+    dfs(numbers, target, 0, 0);
+    return answer;
+}

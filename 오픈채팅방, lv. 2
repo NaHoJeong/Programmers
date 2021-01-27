@@ -1,0 +1,87 @@
+// 오픈채팅방, lv. 2
+// Map
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+vector<string> solution(vector<string> record) {
+    vector<string> answer;
+    vector<string> nick;
+    vector<string> id;
+    map<string, string> m1;
+    
+    int cnt = 0;
+    bool chk = false;
+    for(int i = 0 ; i < record.size() ; i++)
+    {
+        // 닉네임과 id의 경우, split 함수를 이용하여 구하는 것도 가능
+        cnt = 0; // 닉네임과 id의 길이
+        chk = false; // 닉네임과 id 구별짓기 위함
+        if(record[i][0] == 'E' || record[i][0] == 'C') // Enter, Change일 때
+        {
+            for(int j = record[i].size() - 1 ; j > 0 ; j--)
+            {
+                if(record[i][j] == ' ')
+                {
+                    if(chk == false)
+                    {
+                        chk = true;
+                        nick.push_back(record[i].substr(j + 1, cnt)); // 각각 닉네임 저장
+                        cnt = 0;
+                    }
+                    else
+                    {
+                        id.push_back(record[i].substr(j + 1, cnt - 1)); // 각각 id 저장
+                        break;
+                    }
+                }
+                cnt++;
+            }
+            m1[id[i]] = nick[i]; // map을 이용해 중복된 id는 다음 닉네임으로 변경
+        }
+        else // Leave일 경우
+        {
+            for(int j = record[i].size() - 1 ; j > 0 ; j--)
+            {
+                if(record[i][j] == ' ')
+                {
+                    id.push_back(record[i].substr(j + 1, cnt)); // id 저장
+                    break;
+                }
+                cnt++;
+            }
+            nick.push_back(m1[id[i]]); // Leave의 id에 해당하는 닉네임
+        }
+    }
+    
+    string ans = "";
+    for(int i = 0 ; i < record.size() ; i++)
+    {
+        // Change일 경우는 아무 것도 
+        ans = "";
+        if(record[i][0] == 'E') // Enter일 경우
+        {
+            ans += m1[id[i]];
+            ans += "님이 들어왔습니다.";
+            answer.push_back(ans);
+        }
+        
+        else if(record[i][0] == 'L') // Leave일 경우
+        {
+            ans += m1.find(id[i])->second;
+            ans += "님이 나갔습니다.";
+            answer.push_back(ans);
+        }
+    }
+    
+    /*
+    for(auto iter = m1.begin() ; iter != m1.end() ; iter++)
+        cout << iter->first << " " << iter->second << endl;
+    */
+    
+    return answer;
+}

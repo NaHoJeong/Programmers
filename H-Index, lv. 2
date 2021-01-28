@@ -1,0 +1,32 @@
+// H-Index, lv. 2
+// 정렬
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int solution(vector<int> citations) {
+    int answer = 0;
+    
+    // 내림차순으로 정렬
+    sort(citations.rbegin(), citations.rend());
+    
+    for(int i = 0 ; i < citations.size() ; i++)
+    {
+        // 첫 번째부터 인덱스+1(갯수)과 인용 횟수를 비교. [7,6,4,3,1]일 때, 인용 횟수 3이 인덱스+1보다 작음 --> 이 때, H-index는 3
+        if(i + 1 >= citations[i])
+        {
+            if(answer < citations[i])
+                answer = citations[i];
+        }
+        // [5,4,3,2,1] 일 때, 인용 횟수 5가 인덱스+1인 1보다 큼 --> 가능한 H-index는 1. 그 후, 인용 횟수 4가 인덱스+1인 2보다 크므로 H-index는 2
+        else
+        {
+            if(answer < i + 1)
+                answer = i + 1;
+        }
+    }
+    return answer;
+}

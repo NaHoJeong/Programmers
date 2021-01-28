@@ -15,10 +15,44 @@ vector<string> solution(vector<string> record) {
     map<string, string> m1;
     
     int cnt = 0;
-    bool chk = false;
+    int space = 0;
+    int start = 0;
+    string temp = "";
+    //bool chk = false;
     for(int i = 0 ; i < record.size() ; i++)
     {
-        // 닉네임과 id의 경우, split 함수를 이용하여 구하는 것도 가능
+        // 닉네임과 id 추출하기 1
+        start = 0;
+        temp = record[i];
+        space = 0;
+        cnt = 0;
+        if(record[i][0] == 'E' || record[i][0] == 'C')
+        {
+            while(temp.find(' ', start) != -1)
+            {
+                space = temp.find(' ', start); // temp 문자열에 start부분 부터 ' ' 위치 탐색
+                // 첫 번째 부분은 명령어 부분, 두 번째 부분이 아이디
+                if(cnt == 1)
+                    id.push_back(temp.substr(start, space - start));
+                start = space + 1;
+                cnt++;
+            }
+            nick.push_back(temp.substr(start, temp.length() - space)); // 맨 마지막 남은 부분은 닉네임 부분
+            m1[id[i]] = nick[i];
+        }
+        else
+        {
+            while(temp.find(' ', start) != -1)
+            {
+                space = temp.find(' ', start);    
+                start = space + 1;
+            }
+            id.push_back(temp.substr(start, space - start)); // Leave일 경우의 id
+            nick.push_back(m1[id[i]]); // Leave일 경우, 해당 id의 닉네임 
+        }
+    
+        /*
+        // 닉네임과 id 추출하기 2
         cnt = 0; // 닉네임과 id의 길이
         chk = false; // 닉네임과 id 구별짓기 위함
         if(record[i][0] == 'E' || record[i][0] == 'C') // Enter, Change일 때
@@ -56,6 +90,7 @@ vector<string> solution(vector<string> record) {
             }
             nick.push_back(m1[id[i]]); // Leave의 id에 해당하는 닉네임
         }
+        */
     }
     
     string ans = "";

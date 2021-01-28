@@ -1,4 +1,5 @@
 // [3차] 압축, lv 2.
+// 완전 탐색
 
 #include <string>
 #include <vector>

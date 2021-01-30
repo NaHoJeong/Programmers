@@ -1,0 +1,63 @@
+// 풍선 터트리기, lv. 3
+//
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(vector<int> a) {
+    int answer = 0;
+    int min_val = 1000000000;
+    int idx = 0;
+    for(int i = 0 ; i < a.size() ; i++)
+    {
+        if(min_val > a[i])
+        {
+            min_val = a[i];
+            idx = i;
+        }
+    }
+    int right = a[a.size() - 1];
+    int left = a[0];
+    if(a.size() < 3)
+        return a.size();
+    else
+    {
+        //answer += 3;
+        for(int i = 0 ; i < idx ; i++)
+        {
+            //cout << i << " ";
+            if(left > a[i])
+                left = a[i];
+            
+            /*
+            if(left > a[i - 1])
+                left = a[i - 1];
+            if(right == a[i])
+            {
+                right = 1000000000;
+                for(int j = i + 1 ; j < a.size() ; j++)
+                    if(right > a[j])
+                        right = a[j];
+            }
+            */
+            if(a[i] > left)
+                continue;
+            else
+                answer++;
+        }
+        for(int i = a.size() - 1 ; i >= idx ; i--)
+        {
+            //cout << i << " ";
+            if(right > a[i])
+                right = a[i];
+            if(a[i] > right)
+                continue;
+            else
+                answer++;
+        }
+    }
+    
+    return answer;
+}

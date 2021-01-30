@@ -1,0 +1,59 @@
+// 영어 끝말잇기, lv. 2
+// Map
+//    단어들을 보며 잘못된 단어의 순서 파악(끝말을 제대로 이었는지 or 동일한 단어를 말했는지)
+//    잘못된 단어가 있을 경우, 인덱스를 보고 잘못 말한 사람의 순번과 해당 순서 파악
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+vector<int> solution(int n, vector<string> words) {
+    vector<int> answer(2, 0);
+    map <string, int> m1;
+    int idx = -1;
+    char last_char;
+    
+    for(int i = 0 ; i < words.size() ; i++)
+    {
+        if(m1.size() == 0) // map을 이용해 중복된 단어 검사, map의 사이즈가 0일 때(처음 시작할 때), map에 넣음
+        {
+            m1[words[i]] = i;
+            last_char = words[i][words[i].size() - 1]; // 마지막 단어는 처음 단어의 맨 마지막 알파벳
+            continue;
+        }
+        else
+        {
+            if(m1.find(words[i]) == m1.end()) // 현재 단어가 map에 없을 경우(이전에 말하지 않았을 경우)
+            {
+                if(last_char == words[i][0]) // 끝말 잇기가 잘됐을 경우
+                {
+                    last_char = words[i][words[i].size() - 1];
+                    m1[words[i]] = i;
+                }
+                else // 중복된 단어는 아니지만 끝말 잇기가 제대로 안됐을 경우
+                {
+                    idx = i + 1; // 해당 인덱스(순서)를 추출
+                    break;
+                }
+            }
+            else // 중복된 단어일 경우
+            {
+                idx = i + 1;
+                break;
+            }
+        }
+    }
+    
+    if(idx == -1) // 끝말 잇기가 잘 진행되었을 때
+        return answer;
+    
+    answer[0] = idx%n; // 끝말 잇기가 잘못 되었을 때, 나머지 부분을 통해 어떤 사람이 잘못 말했는지
+    if(answer[0] == 0) // 나머지가 0일 경우는 맨 마지막 사람
+        answer[0] = n;
+    answer[1] = (idx - 1)/n + 1; // 잘못 말한 사람이 몇 번째에 잘못 
+    
+    return answer;
+}

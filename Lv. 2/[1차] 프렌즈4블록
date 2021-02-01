@@ -1,0 +1,102 @@
+// [1차] 프렌즈4블록
+// 재귀 함수를 통해 블록을 깨뜨릴 수 없을 때 까지 진행
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+// 깨진 블록을 다시 채우는 부분
+vector<vector<int>> modify_block(vector<vector<int>> board_int, int m, int n)
+{
+    int idx = 0;
+    for(int i = m - 1; i >= 0 ; i--)
+    {
+        for(int j = n - 1 ; j >= 0 ; j--)
+        {
+            idx = 0;
+            while(board_int[i][j] == 0) // 해당 부분이 0이라는 것은 깨졌으며, 위에 매꿔야함
+            {
+                idx++;
+                if(i - idx < 0) // 맨 윗 부분까지 도달했으면 종료
+                    break;
+                board_int[i][j] = board_int[i-idx][j]; // 계속 위로 올라가며 0이 아닌 부분이 있을 경우 대입(매꾸는 역할)
+                board_int[i-idx][j] = 0; // 바뀐 부분은 아래의 깨진 부분을 매꿨으므로 0으로 변환
+            }
+        }
+    }
+    return board_int;
+}
+
+// 2x2로 배치된 블록 판별
+int brk(int m, int n, vector<vector<int>> board_int, int cnt)
+{
+    int brk_cnt = 0; // 깨진 블록의 수
+    vector<vector<int>> temp; // 블록을 깨뜨리고 난 뒤 변화한 블록 형태
+    
+    vector<int> row; // 2x2 형태로 붙은 블록 부분의 첫 번째 행
+    vector<int> col; // 2x2 형태로 붙은 블록 부분의 첫 번째 열
+    
+    int dx[4] = {0, 0, 1, 1}; // 2x2를 위한 x축
+    int dy[4] = {0, 1, 0, 1}; // 2x2를 위한 y축
+    
+    // 2x2 형태로 붙은 불록 판별
+    for(int i = 0 ; i < m - 1 ; i++)
+    {
+        for(int j = 0 ; j < n - 1 ; j++)
+        {
+            if(board_int[i][j] == 0) // 깨진 블록은 무시
+                continue;
+            else
+            {
+                if(board_int[i][j] == board_int[i][j + 1] && board_int[i][j] == board_int[i + 1][j] && board_int[i][j] == board_int[i + 1][j + 1])
+                {
+                    // 4개의 블록이 붙어 있다면, 첫 번째 블록의 행과 열을 저장
+                    // 이 부분에서 바꾸려했으나, 예제 2번과 같이 불은 블록을 공유하는 경우가 있어서 바로 변경 X
+                    row.push_back(i);
+                    col.push_back(j);
+                }
+            }
+        }
+    }
+    
+    // 붙은 블록을 0으로 처리(0은 이전에 쓰이지 않으므로, 0이라는 것은 깨진 블록)
+    for(int i = 0 ; i < row.size() ; i++)
+    {
+        for(int j = 0 ; j < 4 ; j++)
+        {
+            // 이미 깨졌으면 continue, 블록을 공유하는 경우에 해당
+            if(board_int[row[i] + dx[j]][col[i] + dy[j]] == 0)
+                continue;
+            else
+            {
+                board_int[row[i] + dx[j]][col[i] + dy[j]] = 0; // 붙어있는 블록을 0으로 변경
+                brk_cnt++; // 깨진 블록의 수
+            }
+        }
+    }
+    
+    if(brk_cnt == 0) // 깨진 블록이 없다는 것은 끝났다는 이야기
+        return 0;
+    
+    temp = modify_block(board_int, m, n); // 깨진 블록이 있으므로 위에서 깨진 부분을 매꿔야함, 새로운 블록 배치
+    cnt = brk(m, n, temp, cnt + brk_cnt); // 업데이트된 블록 배치를 다시 함수에 넣어 실행
+    
+    cnt += brk_cnt; // 깨진 블록의 총합
+    return cnt;
+}
+
+int solution(int m, int n, vector<string> board) {
+    int answer = 0;
+    
+    // string 형을 int형의 2차원 vector로 변환
+    vector<vector<int>> board_int(m, vector<int>(n, 0));
+    for(int i = 0 ; i < m ; i++)
+        for(int j = 0 ; j < n ; j++)
+            board_int[i][j] = board[i][j];
+    
+    answer = brk(m, n, board_int, 0);
+   
+    return answer;
+}

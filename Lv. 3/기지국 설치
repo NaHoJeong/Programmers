@@ -1,0 +1,59 @@
+// 기지국 설치
+// 설치된 기지국을 기준으로 커버해야 하는 아파트의 수를 계산하고, 하나의 기지국이 커버할 수 있는 영역을 통해 설치해야 할 기지국 수 계산
+
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int solution(int n, vector<int> stations, int w)
+{
+    int answer = 0;
+    int area = 2*w + 1; // 하나의 기지국으로 커버할 수 있는 영역
+    int start = 1; // 1부터 시작
+    
+    int empty_space = 0;
+    for(int i = 0 ; i < stations.size() ; i++)
+    {
+        if(stations[i] - w <= 1) // 맨 앞의 기지국이 첫 번째 아파트를 커버할 수 있는 경우
+        {
+            start = stations[i] + w + 1; // start 지점을 해당 기지국 다음으로 변경
+            continue;
+        }
+        if(stations[i] + w > n) // 기지국이 맨 마지막 아파트를 커버할 수 있는 경우(for 문 밖에서 처리)
+            continue;
+        
+        empty_space = stations[i] - w - start; // 기지국과 기지국 사이의 커버하지 못하는 아파트의 수
+        if(empty_space < 1) // 커버하지 못한 아파트가 없을 경우
+        {
+            start = stations[i] + w + 1; // start 지점만 변경
+            continue;
+        }
+        
+        // 커버할 지역이 있을 경우
+        answer += empty_space / area; // 설치해야 하는 기지국의 수는 커버해야 하는 아파트 수 / 커버가능 지역
+        if(empty_space % area > 0) // 기지국은 항상 자연수이므로 나눈 값이 소수점일 경우 1개 더 설치해야 함
+            answer++;
+        start = stations[i] + w + 1; // 해당 아파트 모두 기지국을 설치하여 커버했으므로 start 지점 변경
+    }
+    
+    // 마지막 영역은 아직 처리가 되지 않았으므로
+    if(stations[stations.size() - 1] + w >= n) // 마지막 기지국이 제일 끝 아파트를 커버할 경우
+    {
+        empty_space = stations[stations.size() - 1] - w - start; // 마지막 설정된 start 지점과 마지막 기지국 사이의 커버해야 하는 아파트
+        if(empty_space < 0) // 커버 아파트가 없을 경우 종료
+            return answer;
+        answer += empty_space / area;
+        if(empty_space % area > 0)
+            answer++;
+    }
+    else // 마지막 기지국이 맨 끝 아파트를 커버하지 못할 경우, start 지점부터 맨 마지막(n) 아파트
+    {
+        empty_space = (n - start + 1);
+        if(empty_space < 0)
+            return answer;
+        answer += empty_space / area;
+        if(empty_space % area > 0)
+            answer++;
+    }
+    return answer;
+}

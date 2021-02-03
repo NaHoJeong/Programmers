@@ -1,0 +1,97 @@
+// [1차] 뉴스 클러스터링
+// map을 이용한 교집합
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <map>
+
+using namespace std;
+
+int solution(string str1, string str2) {
+    int answer = 0;
+    
+    map<string, int> str1_m; // 첫 번째 문자열의 집합(2글자 씩)
+    map<string, int> str2_m; // 두 번째 문자열의 집합(2글자 씩)
+    
+    int min_val = 0; // 교집합 개수
+    int max_val = 0; // 합집합 개수(= 첫 번째 문자열의 집합 개수 + 두 번째 문자열 집합 개수 - 교집합 개수)
+    
+    // 첫 번째 문자열의 집합
+    string temp1 = "";
+    bool chk = false; // 알파벳으로만 이루어져 있는지 판별
+    for(int i = 0 ; i < str1.length() - 1 ; i++)
+    {
+        chk = false;
+        temp1 = str1.substr(i, 2);
+        for(int j = 0 ; j < 2 ; j++)
+        {
+            if(temp1[j] >= 'A' && temp1[j] <= 'Z') // 알파벳이 대문자면 소문자로
+                temp1[j] += 32;
+            if(temp1[j] < 'a' || temp1[j] > 'z') // 알파벳으로 이루어져있지 않으면 break
+            {
+                chk = true;
+                break;
+            }
+        }
+        if(chk == false) // 알파벳으로만 이루어진 문자열
+        {
+            // 이전에 있던 문자열이면 map에서 해당 key에 +1, 아니면 추가
+            if(str1_m.find(temp1) == str1_m.end())
+                str1_m[temp1] = 1;
+            else
+                str1_m[temp1]++;
+            max_val++; // 합집합을 위해 첫 번째 문자열의 개수 합
+        }
+    }
+    
+    // 두 번째 문자열의 집합
+    string temp2 = "";
+    for(int i = 0 ; i < str2.length() - 1 ; i++)
+    {
+        chk = false;
+        temp2 = str2.substr(i, 2);
+        for(int j = 0 ; j < 2 ; j++)
+        {
+            if(temp2[j] >= 'A' && temp2[j] <= 'Z')
+                temp2[j] += 32;
+            if(temp2[j] < 'a' || temp2[j] > 'z')
+            {
+                chk = true;
+                break;
+            }
+        }
+        if(chk == false)
+        {
+            if(str2_m.find(temp2) == str2_m.end())
+                str2_m[temp2] = 1;
+            else
+                str2_m[temp2]++;
+            max_val++; // 합집합을 위해 두 번째 문자열의 개수 합
+        }
+    }
+    
+    // map을 이용해 str2_m의 원소가 str1_m에 있는지 판별
+    int temp = 0;
+    for(auto iter = str2_m.begin() ; iter != str2_m.end() ; iter++)
+    {
+        if(str1_m.find(iter->first) == str1_m.end()) // 없으면 넘어가기
+            continue;
+        else // 있다면 개수를 통해 적은 개수인 것을 교집합의 개수로
+        {
+            temp = iter->second;
+            if(temp > str1_m[iter->first])
+                temp = str1_m[iter->first];
+            min_val += temp;
+            str1_m[iter->first] -= temp;
+        }
+    }
+    max_val -= min_val; // 현재의 합집합은 첫 번째의 문자열 집합 개수 + 두 번째의 문자열 집합 개수이므로 교집합의 개수 
+    
+    if(max_val == 0)
+        return 65536;
+    else
+        answer = (min_val*65536)/max_val;
+    
+    return answer;
+}

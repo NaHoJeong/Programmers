@@ -1,0 +1,63 @@
+// 배달
+// queue를 이용한 최소 cost
+    // start 점과 이어져있으며, 기존의 cost 값과 start의 cost + start와 현재 사이의 cost를 비교하여 최소 cost 도출
+    
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+int solution(int N, vector<vector<int> > road, int K) {
+    int answer = 0;
+
+    vector<int> cost(N + 1, 1000000); // 초기 cost를 최대로
+    cost[0] = 0; // 인덱스 0은 사용 X
+    cost[1] = 0; // 1은 시작점이므로 cost 0
+    
+    queue<int> qu;
+    
+    int start = 1;
+    qu.push(start); // 시작점을 queue에
+    while(!qu.empty())
+    {
+         for(int i = 0 ; i < road.size() ; i++)
+         {
+             // 시작점이 포함됐는지
+             if(road[i][0] == start)
+             {
+                 // 기존의 cost와 새로운 cost와의 비교
+                 // 새로운 cost가 더 작으면 새로운 경로가 갱신되는 것이므로 해당 지점을 queue에 넣기
+                 if(cost[road[i][1]] > cost[start] + road[i][2])
+                 {
+                     cost[road[i][1]] = cost[start] + road[i][2];
+                     qu.push(road[i][1]);
+                 }
+             }
+             // 시작점이 포함됐는지
+             // 새로운 cost가 더 작으면 새로운 경로가 갱신되는 것이므로 해당 지점을 queue에 넣기
+             else if(road[i][1] == start)
+             {
+                
+                 if(cost[road[i][0]] > cost[start] + road[i][2])
+                 {
+                     cost[road[i][0]] = cost[start] + road[i][2];
+                     qu.push(road[i][0]);
+                 }
+             }
+             else
+                 continue;
+        }
+        qu.pop(); // 해당 지점에 대한 경로 및 cost는 비교 완료
+        start = qu.front(); // 새로운 start 지점
+    }
+    // 완료되면 출발점(1)에서 각 지점으로 갈 때의 최소 cost가 계산
+    
+    // 최소 cost와 K 값의 비교를 통해 가능한 마을의 수 구하기
+    for(int i = 1 ; i < N + 1 ; i++)
+        if(cost[i] <= K)
+            answer++;
+    
+    return answer;
+}

@@ -1,0 +1,81 @@
+// 가장 긴 팰린드롬
+// case 1) aabbaa와 같이 두 알파벳을 기준으로 똑같은 문자열
+// case 2) aabaa와 같이 한 개의 알파벳을 기준으로 똑같은 문자열
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// case 1
+int chk1(string s)
+{
+    int max_val = 0;
+    int temp = 0;
+    int ans = 0; // 해당 알파벳을 기준으로 가장 긴 문자열
+    for(int i = 1 ; i < s.length() ;i++)
+    {
+        ans = 0;
+        temp = 0;
+        
+        // 동일한 문자열이 같다면 왼쪽은 -1, 오른쪽은 +1해서 비교
+        while(s[i + temp] == s[i - temp - 1])
+        {
+            ans += 2;
+            temp += 1;
+            
+            // 현재의 길이가 지금까지 찾은 문자열의 길이보다 길면
+            if(ans > max_val)
+                max_val = ans;
+            
+            if(i + temp > s.length() - 1 || i - temp - 1 < 0)
+                break;
+        }
+    }
+    return max_val;
+}
+
+// case 2
+int chk2(string s)
+{
+    int max_val = 0;
+    int temp = 1;
+    int ans = 1;
+    
+    for(int i = 1 ; i < s.length() ;i++)
+    {
+        ans = 1;
+        temp = 1;
+        
+        // 동일한 문자열이 같다면 왼쪽은 -1, 오른쪽은 +1해서 비교
+        while(s[i - temp] == s[i + temp])
+        {
+            ans += 2;
+            temp += 1;
+            
+            // 현재의 길이가 지금까지 찾은 문자열의 길이보다 길면
+            if(ans > max_val)
+                max_val = ans;
+            if(i + temp > s.length() - 1 || i - temp < 0)
+                break;
+        }
+    }
+    return max_val;
+}
+
+int solution(string s)
+{
+    int answer = 1;
+    int ans = 0;
+    
+    ans = chk1(s);
+    if(answer < ans)
+        answer = ans;
+    
+    ans = chk2(s);
+    
+    // 두 케이스에서 찾은 길이 비교하여 최대 길이 추출
+    if(answer < ans)
+        answer = ans;
+    return answer;
+}

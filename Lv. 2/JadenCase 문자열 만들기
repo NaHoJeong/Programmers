@@ -1,0 +1,37 @@
+// JadenCase 문자열 만들기
+// 문자열을 처음부터 끝까지 탐색
+  // 띄어쓰기가 나오면 chk를 true로 하고, 이전이 true고 현재가 소문자면 대문자로 변환
+  // chk가 true가 아닌데 대문자면 소문자로 변환
+
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+string solution(string s) {
+    string answer = s;
+    
+    bool chk = true;
+    for(int i = 0 ; i < s.length() ; i++)
+    {
+        if(chk == true)
+        {
+            if(s[i] >= 'a' && s[i] <= 'z')
+                answer[i] -= 32;
+            chk = false;
+        }
+        else
+        {
+            if(s[i] >= 'A' && s[i] <= 'Z')
+                answer[i] += 32;
+        }
+        // 띄어쓰기가 여러 번 나올 때, 첫 번째 띄어쓰기에서 chk가 true로 되지만 그 다음에는 false로 바뀌기 때문에
+          // 맨 마지막에 조건문 
+        if(s[i] == ' ')
+            chk = true;
+    }
+    
+    return answer;
+}

@@ -1,0 +1,40 @@
+// 입국 심사
+// 이분 탐색을 이용
+  // 가장 짧은 시간 0과 가장 긴 시간의 중간 지점을 시작으로 답 여부를 판단하며, 계속 중간 지점을 이동하며 최적의 답 추출
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+long long solution(int n, vector<int> times) {
+    long long answer = 0;
+    sort(times.begin(), times.end()); // 가장 오래 걸리는 입국 심사대 추출
+    long long start = 0;
+    long long end = (long long)times[0] * (long long)n; // 가장 오래 걸리는 시간(가장 오래 걸리는 입국 심사대에 모든 사람이 심사를 받는 경우)
+    long long mid = 0;
+    long long sum = 0;
+    while(start <= end)
+    {
+        sum = 0;
+        mid = (start + end) /2; // 처음과 가장 오래걸리는 시간의 중간
+        
+        for(long long i = 0 ; i < times.size() ; i++)
+            sum += mid / times[i]; // 몫에 해당하는 부분이 각 입국 심사대에서 주어진 시간 내에 처리할 수 있는 심사(인원)
+            
+        // 주어진 시간(mid) 내에 모든 인원을 심사할 수 있다면(정답의 후보)
+          // 최단 시간을 찾기 위해 mid에서 1씩 뺀 후 end에 대입 --> 이 후, mid는 start와 end 사이 이므로 start와 정답 후보 사이의 시간을 탐색 
+        if(sum >= n)
+        {
+            answer = mid; // 우선 정답의 후보
+            end = mid - 1; // 더 짧은 시간을 찾기 위함
+        }
+        // 주어진 시간(mid) 내에 처리하지 못한다면 start를 mid+1로 하여 새로운 시간에서 답 판별
+          // 어차피 mid 보다 적은 시간 내에선 전체 인원 심사 
+        else
+            start = mid + 1;
+    }
+    
+    return answer;
+}

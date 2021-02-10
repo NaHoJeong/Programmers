@@ -1,0 +1,65 @@
+// [1차] 캐시
+// 벡터를 이용해 캐시를 만들고 다음 데이터가 캐시에 있는지 확인
+  // 있다면 해당 캐시는 벡터의 맨 마지막에 대입, 없다면 0번째 벡터의 캐시 삭제 후 한 칸씩 shift 후 맨 마지막 캐시에 대입
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int solution(int cacheSize, vector<string> cities) {
+    int answer = 0;
+    vector<string> cache;
+    
+    if(cacheSize == 0)
+        return cities.size() * 5;
+    
+    // 모든 영어는 대문자로
+    for(int i = 0 ; i < cities.size() ; i++)
+        for(int j = 0 ; j < cities[i].length() ; j++)
+            if(cities[i][j] >= 97)
+                cities[i][j] -= 32;
+    
+    // 캐시에 있는지 여부
+    bool chk = false;
+    int idx = 0;
+    for(int i = 0; i < cities.size() ; i++)
+    {
+        chk = false;
+        idx = 0;
+        for(int j = 0 ; j < cache.size() ; j++)
+        {
+            // 해당 도시명이 캐시에 있는지
+            if(cache[j] == cities[i])
+            {
+                idx = j;
+                chk = true;
+            }
+        }
+        if(chk == true)
+        {
+            answer++; // 해당 도시명이 캐시에 있다면 실행시간은 1
+            // 도시명에 해당하는 캐시를 가장 최신으로 갱신(벡터의 맨 마지막으로)
+            for(int j = idx ; j < cache.size() - 1 ; j++)
+                cache[j] = cache[j+1]; // 캐시 shift
+            cache[cache.size() - 1] = cities[i]; // 벡터의 맨 마지막 부분에 도시명 대입
+        }
+        else
+        {
+            answer += 5; // 해당 도시명이 캐시에 있다면 실행시간은 5
+            
+            // 캐시가 꽉 찾으면 맨처음 들어온 캐시(0번째) 삭제 후 새로운 도시를 벡터의 맨 마지막으로
+            if(cache.size() == cacheSize)
+            {
+                for(int j = 0 ; j < cache.size() - 1 ; j++)
+                    cache[j] = cache[j+1];
+                cache[cache.size() - 1] = cities[i];
+            }
+            else
+                cache.push_back(cities[i]);
+        }
+    }
+    
+    return answer;
+}

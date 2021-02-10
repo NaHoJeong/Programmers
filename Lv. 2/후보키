@@ -1,0 +1,116 @@
+// 후보키
+// dfs를 이용해 모든 키의 조합 탐색, unique와 minimal이라는 함수를 따로 정의하여 유일성, 최소성 
+
+#include <string>
+#include <vector>
+//#include <iostream>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+// 유일성 판단
+  // map을 이용해 중복 검사
+bool unique(vector<vector<string>> relation, string stand)
+{
+    map <string, int> m1;
+    string temp = "";
+    for(int i = 0 ; i < relation.size() ; i++)
+    {
+        temp = "";
+        for(int j = 0 ; j < stand.length(); j++)
+        {
+            temp += relation[i][stand[j] - 48];
+        }
+        
+        // map 이용, 중복되었다면 return
+        if(m1.find(temp) == m1.end())
+            m1[temp] = 1;
+        else
+            return false;
+    }
+    m1.clear(); // 유일성을 판단했으면 map의 모든 요소 제거
+    return true; // 여기까지 왔다는 것은 false를 거치지 않았으므로 유일성 만족
+}
+
+vector<string> elem; // 후보키가 가능한 모든 조합
+// 최소성 판단
+  // 각 원소가 해당 조합(stand)에 있는지
+    // 이전에 ac가 있었는데, 그 다음 들어온 값이 abc면 전체 find로 탐색 불가. 하지만 이는 최소성 만족 X
+void minimal(string stand)
+{
+    bool chk = false;
+    int cnt = 0;
+    if(elem.size() == 0)
+        elem.push_back(stand);
+    else
+    {
+        for(int i = 0 ; i < elem.size() ; i++)
+        {
+            cnt = 0;
+            for(int j = 0 ; j < elem[i].length() ; j++)
+            {
+                if(stand.find(elem[i][j]) == -1) // stand에 없다면 cnt++
+                    cnt++;
+            }
+            // cnt가 0이라는 것은 최소성 만족 X --> stand의 모든 요소는 elem의 어느 한 값에 속한다는 의미이므로
+            if(cnt == 0)
+            {
+                chk = true;
+                break;
+            }
+            else
+                chk = false;
+        }
+        // false면 최소성 만족이므로 후보키 가능
+        if(chk == false)
+            elem.push_back(stand);
+    }
+}
+
+// 모든 속성의 조합을 구하는데, 구한 뒤 해당 조합이 바로 후보키가 되는지 유일성, 최소성 판단
+bool dfs(map <string, string> m1, vector<vector<string>> relation, int num, int cnt, vector<int> visit, string stand)
+{
+    bool chk = false;
+    
+    // 조건에 맞는(속성의 개수) 조합을 찾으면 바로 유일성 판단
+    if(num <= cnt)
+    {
+        chk = unique(relation, stand);
+        return chk;
+    }
+    
+    // 조합 탐색
+    for(int i = 0 ; i < relation[0].size() ; i++)
+    {
+        if(visit[i] == 0)
+        {
+            visit[i] = 1;
+            stand += to_string(i); // 뒤에 새로운 속성 추가
+            chk = dfs(m1, relation, num, cnt + 1, visit, stand);
+            
+            // 탐색한 조합이 유일성을 만족하면 true, 만족하지 못하면 false 반환
+            if(chk == true)
+                minimal(stand); // 유일성을 만족하면 최소성을 
+            stand = stand.substr(0, stand.length() - 1); // 조합을 위해 뒤에 값 제거, 이전에 뒤에 속성을 추가했으므로
+        }
+    }
+    
+    return false;
+}
+
+int solution(vector<vector<string>> relation) {
+    int answer = 0;
+    vector<int> visit(relation[0].size(), 0); // dfs를 이용하기 위해 --> 순서가 달라도 중복이므로 
+    map <string, string> m1;
+    string stand = ""; // 각 속성의 인덱스를 추출(조합을 위해)
+
+    if(relation[0].size() == 1)
+        return 1;
+    
+    for(int i = 0 ; i < relation[0].size() + 1 ; i++)
+        dfs(m1, relation, i + 1, 0, visit, stand); // 속성의 조합을 알기 위해
+    
+    answer = elem.size(); // elem이 후보키가 될 수 있는 것의 집합이므로 이 집합의 개수가 답
+    return answer;
+}

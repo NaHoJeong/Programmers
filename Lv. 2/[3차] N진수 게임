@@ -1,0 +1,58 @@
+// [3차] N진수 게임
+// 튜브가 말해야 하는 순번을 먼저 계산한 뒤 1부터 N진수로 계산하며 해당 순번일 때 답의 vector에 push
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <stack>
+
+using namespace std;
+
+string solution(int n, int t, int m, int p) {
+    string answer = "";
+    string character[6] = {"A", "B", "C", "D", "E", "F"};
+    
+    vector<int> ans(t, 0); // 순번
+    for(int i = 0 ; i < ans.size() ; i++)
+        ans[i] = i*m + p;
+    
+    int order = 0; // 튜브가 말해야하는 순번의 인덱스
+    if(p == 1)
+    {
+        answer += "0";
+        order++;
+    }
+    
+    int num = 1; // 현재의 수
+    int temp_num = num; // 현재의 수를 진수로
+    stack<int> s; // 진수로 바꾼 것 저장
+    int cnt = 1; // 현재까지의 자릿 수
+    
+    
+    while(answer.length() < t)
+    {
+        temp_num = num;
+        while(temp_num > 0)
+        {
+            s.push(temp_num % n);
+            temp_num /= n;
+        }
+        while(!s.empty())
+        {
+            int temp = s.top();
+            s.pop();
+            cnt++;
+            if(cnt == ans[order])
+            {
+                string temp_s = to_string(temp);
+                if(temp >= 10)
+                    temp_s = character[temp-10];
+                answer += temp_s;
+                order++;
+            }
+        }
+        num++;
+    }
+    
+    return answer;
+}

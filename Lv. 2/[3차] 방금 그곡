@@ -1,0 +1,104 @@
+// [3차] 방금 그곡
+// 노래 제목과 계이름, 재생 시간 추출
+  // 계이름은 #인 경우에는 소문자로 변환
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+string solution(string m, vector<string> musicinfos) {
+    string answer = "(None)";
+      
+    vector<string> song_name(musicinfos.size(), ""); // 노래 제목
+    vector<string> song_m(musicinfos.size(), ""); // 음
+    vector<int> play_time(musicinfos.size(), 0); // 재생 시간
+    
+    int play[2] = {0};
+    
+    // ','를 통한 노래 제목, 음, 재생 시간 추출
+    int temp_idx = 0;
+    for(int i = 0 ; i < musicinfos.size() ; i++)
+    {
+        for(int j = musicinfos[i].length() - 1 ; j > 0 ; j--)
+        {
+            if(musicinfos[i][j] == ',')
+            {
+                temp_idx = j;
+                break;
+            }
+        }
+        
+        temp_idx++;
+        song_name[i] = musicinfos[i].substr(12, temp_idx - 13);
+        song_m[i] = musicinfos[i].substr(temp_idx, musicinfos[i].length() - temp_idx);
+        
+        // 재생 시간은 모두 분으로 환산
+          // 만약 음수 일 경우(노래 끝나는 시간이 00:00), 시간에 24:00으로 바꾸어 계산
+        play[0] = stoi(musicinfos[i].substr(6, 2)) - stoi(musicinfos[i].substr(0, 2));
+        play[1] = stoi(musicinfos[i].substr(9, 2)) - stoi(musicinfos[i].substr(3, 2));
+        
+        play_time[i] = play[0]*60 + play[1]*1;
+        if(play_time[i] < 0)
+            play_time[i] = (play[0] + 24)*60 + play[1]*1;
+    }
+    
+    // #인 음은 소문자로 변환
+    string modif_m = "";
+    vector<string> modif_song(musicinfos.size(), "");
+    
+    for(int i = 0 ; i < musicinfos.size() ; i++)
+    {
+        for(int j = 0 ; j < song_m[i].length() ; j++)
+        {
+            if(song_m[i][j] == '#')
+                continue;
+            if(song_m[i][j + 1] == '#')
+                modif_song[i] += song_m[i][j] + 32;
+            else
+                modif_song[i] += song_m[i][j];
+        }
+    }
+    
+    for(int i = 0 ; i < m.length() ; i++)
+    {
+        if(m[i] == '#')
+            continue;
+        if(m[i + 1] == '#')
+            modif_m += m[i] +32;
+        else
+            modif_m += m[i];
+    }
+    
+    // 답 구하는 과정
+    string temp_m = "";
+    int temp1_idx = 0;
+    int max_val = 0;
+    for(int i = 0 ; i < musicinfos.size() ; i++)
+    {
+        temp_m = modif_song[i];
+        temp1_idx = 0;
+        
+        // 재생 시간이 주어진 시간보다 길 경우, 맨 처음의 음을 더해줌
+        while(temp_m.length() < play_time[i] )
+        {
+            temp_m += temp_m[temp1_idx];
+            temp1_idx++;
+            if(temp_m.find(modif_m) != -1)
+                break;
+        }
+        
+        // 재생 시간이 더 짧은 경우, 재생 시간 만큼 자름
+        if(temp_m.length() > play_time[i])
+            temp_m = temp_m.substr(0, play_time[i]);
+         
+        // 조건을 만족하며, 재생 시간이 최대인 것 
+        if(temp_m.find(modif_m) != -1 && max_val < play_time[i])
+        {
+            answer = song_name[i];
+            max_val = play_time[i];
+        }
+    }
+    
+    return answer;
+}

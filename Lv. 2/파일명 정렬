@@ -1,0 +1,138 @@
+// 파일명 정렬
+// 정렬 이용
+  // 정렬 이용 시, head 부분와 number 부분을 추출한 뒤 이를 이용해 정렬(head와 number 부분을 추출한 뒤 정렬하는 것이 아님)
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+bool cmp(string a, string b)
+{
+    // 첫 번째 파일 명의 head, number 부분
+    string s_a = "";
+    int n_a = 0;
+    
+    bool ch_sa = false;
+    int cnt_sa = 0;
+    int cnt_na = 0;
+    
+    int ind_a = 0;
+    for(int i = 0 ; i < a.length() ;i++)
+    {
+        cnt_sa++;
+        if((a[i] >= '0' && a[i] <= '9'))
+        {
+            // 처음 숫자가 나온다면 해당 부분까지 haed이며, 그 후 숫자는 number 부분
+            if(ch_sa == false)
+            {
+                ch_sa = true;
+                s_a = a.substr(0, cnt_sa - 1);
+                ind_a = cnt_sa - 1;
+                cnt_na++;
+            }
+            else
+                cnt_na++;
+        }
+        else
+        {
+            // else에 들어오며 ch_sa가 true면, number 부분이 끝난 것
+            if(ch_sa == true)
+                break;
+        }
+    }
+    // number 부분은 아무리 길어도 5자리를 넘어가면 안되므로
+    if(cnt_na > 5)
+        cnt_na = 5;
+        
+    // 첫 번째 파일의 head와 number
+    string temp = a.substr(ind_a, cnt_na);
+    n_a = stoi(temp);
+        
+    // 대문자와 소문자는 같으므로 모두 대문자로 변경
+    for(int i = 0 ; i < s_a.length() ; i++)
+        if(s_a[i] >= 97 && s_a[i] <= 122)
+            s_a[i] -= 32;
+    
+    // 두 번째 파일명도 똑같이
+    string s_b = "";
+    int n_b = 0;
+    
+    bool ch_sb = false;
+    int cnt_sb = 0;
+    int cnt_nb = 0;
+    
+    int ind_b = 0;
+    for(int i = 0 ; i < b.length() ;i++)
+    {
+        cnt_sb++;
+        if((b[i] >= '0' && b[i] <= '9'))
+        {
+            if(ch_sb == false)
+            {
+                ch_sb = true;
+                s_b = b.substr(0, cnt_sb - 1);
+                ind_b = cnt_sb - 1;
+                cnt_nb++;
+            }
+            else
+                cnt_nb++;
+        }
+        else
+        {
+            if(ch_sb == true)
+                break;
+        }
+    }
+    if(cnt_nb > 5)
+        cnt_nb = 5;
+        
+    // 두 번째 파일의 head와 number
+    temp = b.substr(ind_b, cnt_nb);
+    n_b = stoi(temp);
+    
+    for(int i = 0 ; i < s_b.length() ; i++)
+        if(s_b[i] >= 97 && s_b[i] <= 122)
+            s_b[i] -= 32;
+    
+    // head부터 비교하는데, 길이가 가장 짧은 것을 기준으로 비교
+      // 길이가 다른데 짧은 부분까지 같다면, 길이가 긴 것이 더 나중
+    int len = s_a.length();
+    if(len > s_b.length())
+        len = s_b.length();
+    for(int i = 0 ; i < len ; i++)
+    {
+        // 단어 하나하나 비교
+        if(s_a[i] < s_b[i])
+            return true;
+        else if(s_a[i] > s_b[i])
+            return false;
+    }
+    if(s_b.length() > s_a.length())
+        return true;
+    else if(s_b.length() < s_a.length())
+        return false;
+    else // head 부분이 같다면 number 부분 비교
+    {
+        // 모두 int형 이므로 단순 비교
+        if(n_a < n_b)
+            return true;
+        else
+            return false;
+    }
+}
+
+vector<string> solution(vector<string> files) {
+    vector<string> answer;
+    
+    // 원하는 대로 정렬
+    stable_sort(files.begin(), files.end(), cmp);
+  
+    // 정렬이 완료되면 정렬 순서대로 정답에 대입
+    for(int i = 0 ; i < files.size() ;i++)
+        answer.push_back(files[i]);
+    
+    return answer;
+}

@@ -1,0 +1,39 @@
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int solution(vector<int> arr) {
+    int answer = 1;
+    
+    // 내림차순 정렬 후 큰 수에서 작은 수로 이동하며 최소 공배수 계산
+    sort(arr.rbegin(), arr.rend());
+    
+    answer = arr[0];
+    int r = 0;
+    int num1 = 0, num2 = 0;
+    
+    for(int i = 1 ; i < arr.size() ; i++)
+    {
+        r = 0;
+        if(answer % arr[i] == 0) // 나눠지면 다음으로(최소 공배수이므로)
+            continue;
+        else
+        {
+            // 최소 공배수 구하는 법
+              // 여기서 결국, num2는 최대공약수
+            num1 = arr[i];
+            num2 = answer;
+            while(num1 != 0)
+            {
+                r = num2 % num1;
+                num2 = num1;
+                num1 = r;
+            }
+            answer = answer * arr[i] / num2;
+        }
+    }
+    return answer;
+}

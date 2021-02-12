@@ -1,0 +1,63 @@
+// 순위
+// A가 B를 이기고, B가 C를 이겼으면, B는 2등이며, 이를 이긴 A는 C와 대결하지 않아도 1등, C는 A와 대결하지 않아도 3등
+  // 즉, 내가 이긴 친구가 이긴 친구들은 나와 대결하지 않아도 내가 이긴 것
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int solution(int n, vector<vector<int>> results) {
+    int answer = 0;
+    vector<vector<int>> win(n+1, vector<int>(n+1, 0)); // 승패를 나타내는 벡터
+    for(int i = 0 ; i < results.size() ; i++)
+    {
+        win[results[i][0]][results[i][1]] = 1; // results[i][0]이 results[i][1]를 이겼으므로 1 
+        win[results[i][1]][results[i][0]] = -1; // results[i][1]이 results[i][0]에게 졌으므로 -1
+    }
+    
+    // k가 i를 이기고, i가 j를 이겼으면, k는 j를 이긴 것으로 생각해도 무방
+    // 진 것 역시 마찬가지
+    for(int i = 1 ; i < n+1 ; i++)
+    {
+        for(int j = 1 ; j < n+1 ; j++)
+        {
+            if(win[i][j] == 1)
+            {
+                for(int k = 1 ; k < n+1 ; k++)
+                {
+                    if(win[k][i] == 1)
+                        win[k][j] = 1;
+                }
+            }
+            if(win[i][j] == -1)
+            {
+                for(int k = 1 ; k < n+1 ; k++)
+                {
+                    if(win[k][i] == -1)
+                        win[k][j] = -1;
+                }
+            }
+        }
+    }
+    
+    // 대결 결과 중, 이긴 것(1), 진것(-1) 아닌 대결하지 않은 것(0)이 있다면 순위를 알지 못함
+    int cnt_res = 0;
+    for(int i = 1 ; i < n+1 ;i++)
+    {
+        cnt_res = 0;
+        for(int j = 1 ; j < n+1 ;j++)
+        {
+            if(win[i][j] == 0)
+                continue;
+            else
+                cnt_res++; // 승패가 결정된 경기는 +1
+        }
+        if(cnt_res == n-1) // 승패가 결정된 경기가 n-1(경기 수)일 경우 순위를 알 수 있으므로
+            answer++;
+    }
+    
+  
+    return answer;
+}

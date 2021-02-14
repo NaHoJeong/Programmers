@@ -1,0 +1,77 @@
+// 베스트앨범
+
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+bool cmp1(pair<string, int> a, pair<string, int> b)
+{
+    if(a.second > b.second)
+        return true;
+    else
+        return false;
+}
+
+bool cmp2(pair<int, int> a, pair<int, int> b)
+{
+    if(a.first > b.first)
+        return true;
+    else
+        return false;
+}
+
+vector<int> solution(vector<string> genres, vector<int> plays) {
+	vector<int> answer;
+    vector<string> max_val;
+    vector<pair<string, int>> song; // 정렬을 위한 벡터 -> 이용하여 가장 많이 재생된 장르 추출
+    vector<pair<string, int>> ans_song; // 결과를 위한 벡터 -> 이용하여 장르의 순서에 따른 곡 추출
+    vector<pair<string, int>> sum;
+    
+    // 각 장르와 재생횟수를 묶어 벡터에 추가
+    for(int i = 0 ; i < plays.size() ; i++)
+    {
+        song.push_back(make_pair(genres[i], plays[i]));
+        ans_song.push_back(make_pair(genres[i], plays[i]));
+    }
+    sort(song.begin(), song.end()); // 장르별로 정렬
+    
+    // 각 장르에 따른 총 재생횟수
+    sum.push_back(make_pair(song[0].first, song[0].second));
+    for(int i = 1 ; i < plays.size() ; i++)
+    {
+        if(sum[sum.size()-1].first == song[i].first)
+            sum[sum.size()-1].second += song[i].second;
+        else
+            sum.push_back(make_pair(song[i].first, song[i].second));
+    }
+    
+    // 어떤 장르가 가장 많이 재생됐는지
+    sort(sum.begin(), sum.end(), cmp1);
+    
+    // 가장 많이 재생된 장르의 각각 노래와 재생횟수
+    vector<pair<int, int>> ans;
+    for(int i = 0 ; i < sum.size() ; i++)
+    {
+        for(int j = 0 ; j < ans_song.size() ; j++)
+        {
+            if(sum[i].first == ans_song[j].first)
+                ans.push_back(make_pair(ans_song[j].second, j));
+        }
+        
+        if(ans.size() == 1)
+            answer.push_back(ans[0].second); // 각 장르의 노래가 하나면 재생
+        else
+        {
+            stable_sort(ans.begin(), ans.end(), cmp2); 
+            // 기본 내림차순인데 cmp2 하는 이유
+                // first(재생 횟수로 비교 후 같을 때는 순번 대로 하려고)
+            answer.push_back(ans[0].second);
+            answer.push_back(ans[1].second);
+        }
+        ans.clear();
+    }
+	return answer;
+}

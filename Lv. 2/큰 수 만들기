@@ -1,0 +1,36 @@
+// 큰 수 만들기
+// 숫자 배열에서 앞의 숫자가 뒤의 숫자보다 작으면 앞의 배열 삭제
+  // 삭제해야하는 숫자만큼 삭제했을 경우 종료
+  // 만약 앞의 숫자가 모두 커서 삭제하지 못하면 남은 개수 만큼 뒤에서 삭제
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+string solution(string number, int k) {
+    string answer = "";
+    
+    int cnt = 0; // 삭제한 숫자의 수
+    // 숫자 삭제
+    while(cnt < k)
+    {
+        bool chk = false;
+        int idx = number.length() - 1; // 만약 앞의 숫자들이 바로 뒤의 숫자보다 모두 클 경우, 가장 뒤에 있는 숫자 
+        for(int i = 0 ; i < number.length() - 1 ; i++)
+        {
+            if(number[i] < number[i+1])
+            {
+                chk = true;
+                idx = i;
+                break;
+            }
+        }
+        number = number.substr(0, idx) + number.substr(idx+1, number.length() - idx - 1);
+        cnt++;
+    }
+    
+    return number;
+}

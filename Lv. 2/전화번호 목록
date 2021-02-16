@@ -1,0 +1,27 @@
+// 전화번호 목록
+
+
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+bool solution(vector<string> phone_book) {
+    bool answer = true; // 이중포문 안에 있는 if 문에 걸리지 않으면 포함하지 않음
+    
+    sort(phone_book.begin(), phone_book.end());
+    for(int i = 0 ; i < phone_book.size() - 1 ;i++)
+    {
+        int len = phone_book[i].length(); // 찾을 전화번호의 길이
+        // 다른 전화번호에 찾을 전화번호가 있는지
+        for(int j = i + 1 ; j < phone_book.size() ;j++)
+        {
+            string temp = phone_book[j].substr(0, len);
+            if(temp == phone_book[i])
+                return false;
+        }
+    }
+    
+    return answer;
+}

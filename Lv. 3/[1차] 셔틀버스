@@ -1,0 +1,95 @@
+// [1차] 셔틀버스
+//
+
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+
+string solution(int n, int t, int m, vector<string> timetable) {
+    string answer = "";
+    vector<int> time(timetable.size() , 0); // 사람들 시간을 분으로 변환
+    int start = 540; // 오전 9시를 시작으로
+    int hh = 0;
+    int mm = 0;
+    
+    // 모든 사람의 시간을 분으로 환산
+    for(int i = 0 ; i < timetable.size() ; i++)
+    {
+        hh = 0;
+        mm = 0;
+        hh = stoi(timetable[i].substr(0,2));
+        mm = stoi(timetable[i].substr(3,2));
+        
+        time[i] = hh * 60 + mm;
+    }
+    
+    // 시간을 오름차순 정렬
+    sort(time.begin(), time.end());
+    
+    int ans = 0;
+    int max_val = start + ((n-1) * t); // 가장 마지막에 도착하는 셔틀버스의 시간(콘이 기다릴 수 있는 가장 늦은 시간)
+    
+    vector<int> crew; // 탑승객의 시간
+    int sum = 0; // 전체 탑승객 수
+    int cnt = 0; // 현재 버스의 탑승객 수
+    
+    // 모든 사람의 기다리는 시간이 9시보다 이를 경우
+    if(time[time.size() - 1] < start)
+    {
+        if(n*m > time.size()) // 셔틀버스가 태울 수 있는 사람이 기다리는 사람보다 많을 경우
+            ans = start + (n-1) *t; // 테스트 13번!!, 기다리는 사람들보다 늦게 타고 셔틀버스에 탑승할 수 있으므로 마지막 셔틀버스가 출발하기 바로 직전 시간
+        else
+            ans = time[n*m - 1] - 1; // 셔틀버스가 태울 수 있는 사람이 기다리는 사람보다 적을 경우, 가장 마지막에 탑승하는 사람보다 1분 빠르게
+    }
+    // 모든 사람의 기다리는 시간이 가장 마지막에 도착하는 셔틀버스의 시간보다 늦을 경우
+    else if(time[0] > start + (n - 1) * t)
+        ans = start + (n - 1) * t; // 콘은 맨 마지막에 도착하는 셔틀버스에 탑승해야함
+    else
+    {
+        for(int i = 0 ; i < n ; i++)
+        {
+            cnt = 0;
+            int arrive = start + i * t; // 현재 셔틀버스의 출발 시간
+            // 현재의 셔틀버스에 탑승하는 승객의 시간을 crew 벡터에 push_back
+            for(int j = sum ; j < time.size() ; j++)
+            {
+                if(arrive >= time[j])
+                {
+                    cnt++;
+                    sum++;
+                    if(i == n - 1) // 맨 마지막 셔틀버스일 경우
+                        crew.push_back(time[j]); // 탑승객의 기다리는 시간 push_back
+                }
+                // 현재 셔틀버스에 모든 사람이 타고 있을 경우
+                if(cnt == m)
+                    break;
+            }
+            
+            // 맨 마지막 셔틀버스일 경우, 해당 셔틀버스에 마지막에 탄 탑승객의 기다리는 시간보다 1분 빨리 기다려야함
+            if(i == n-1)
+            {
+                if(cnt < m)
+                    ans = start + (n - 1) * t;
+                else
+                    ans = crew[crew.size() - 1] - 1;
+            }
+        }   
+    }
+    
+    // 구한 답을 hh:mm으로 변환
+    if(ans > max_val)
+        ans = max_val;
+    string ans_h = to_string(ans / 60);
+    if(ans_h.length() == 1)
+        ans_h = '0' + ans_h;
+    string ans_m = to_string(ans % 60);
+    if(ans_m.length() == 1)
+        ans_m = '0' + ans_m;
+    answer = ans_h + ':' + ans_m;
+    
+    
+    return answer;
+}

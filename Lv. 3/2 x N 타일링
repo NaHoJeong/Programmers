@@ -1,0 +1,25 @@
+// 2 x N 타일링
+// 규칙(피보나치)를 이용해 풀이
+  // 조합(nCr) 사용 시 int 범위 초과로 인해 사용 X
+
+#include <string>
+#include <vector>
+#include <iostream>
+using namespace std;
+
+int solution(int n) {
+    int answer = 0;
+    if(n == 1 || n == 2) // 1일 땐 1, 2일 땐 2
+        return n;
+    
+    // 피보나치
+    int n_1 = 1, n_2 = 2;
+    for(int i = 3 ; i < n + 1 ; i++)
+    {
+        answer = (n_1 + n_2)%1000000007;
+        n_1 = n_2%1000000007;
+        n_2 = answer%1000000007;
+    }
+    
+    return answer;
+}

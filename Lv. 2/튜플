@@ -1,0 +1,73 @@
+// 튜플
+
+#include <string>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <map>
+
+using namespace std;
+
+bool cmp(pair<int, int> a, pair<int, int> b)
+{
+    if(a.second <= b.second)
+        return true;
+    return false;
+}
+
+vector<int> solution(string s) {
+    vector<int> answer;
+    map<int, int> m1;
+    
+    int idx = 0, cnt = 0;
+    int temp = 0;
+    bool chk = false;
+    
+    // map을 이용해 각 숫자가 몇번 나왔는지 파악
+    for(int i = 0 ; i < s.length() ; i++)
+    {
+        if(s[i] >= '0' && s[i] <= '9') // 숫자가 나올 경우, 자릿 수 +1
+            cnt++;
+        else if(s[i] == ',' && chk == true) // {가 나오면 chk가 true이기 때문에 그 후 ,가 나오면 숫자
+        {
+            temp = stoi(s.substr(idx, cnt));
+            cnt = 0;
+            idx = i + 1;
+            if(m1.find(temp) == m1.end())
+                m1[temp] = 1;
+            else
+                m1[temp]++;
+            
+        }
+        else if(s[i] == '{') // 이제 숫자 시작
+        {
+            idx = i + 1;
+            chk = true;
+            cnt = 0;
+        }
+        else if(s[i] == '}' && chk == true) // chk가 true이면서 }가 나오면 숫자 끝
+        {
+            chk = false;
+            temp = stoi(s.substr(idx, cnt));
+            cnt = 0;
+            if(m1.find(temp) == m1.end())
+                m1[temp] = 1;
+            else
+                m1[temp]++;
+        }
+    }
+    
+    // 나온 숫자들과 횟수를 정렬을 위해 벡터에 대입
+    vector<pair<int, int>> ans;
+    
+    for(auto iter = m1.begin() ; iter != m1.end() ; iter++)
+        ans.push_back(make_pair(iter->first, iter->second));
+    
+    // 횟수에 따라 숫자 정렬
+    stable_sort(ans.rbegin(), ans.rend(), cmp);
+    
+    for(int i = 0 ; i < ans.size() ;i++)
+        answer.push_back(ans[i].first);
+    
+    return answer;
+}

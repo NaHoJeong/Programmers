@@ -1,0 +1,93 @@
+// 쿼드압축 후 개수 세기
+// 2x2 부분에 있는 것을 계속해서 압축 -> 크기를 기존에서 1/4로 줄이며 탐색(4x4 -> 2x2 -> 1x1)
+  // 압축이 되지 않을 경우, 0과 1의 개수를 세며, 3으로 변경(3은 압축이 되지 않았으며, 개수를 모두 셌다는 의미이므로, 3이 나오면 무시)
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector<int> solution(vector<vector<int>> arr) {
+    vector<int> answer(2, 0);
+    
+    int cnt_0 = 0;
+    int cnt_1 = 0;
+    
+    int num = arr.size() / 2; 
+    vector<vector<int>> modify(num, vector<int>(num, 0)); // 압축된 후의 배열
+    
+    bool chk = true; // 압축이 되지 않았으면 종료
+    while(chk == true)
+    {
+        if(num < 1)
+        {
+            // 1x1이 됐을 때
+            if(arr[0][0] == 0)
+                answer[0] = cnt_0 + 1;
+            else
+                answer[1] = cnt_1 + 1;
+            return answer;
+        }
+        chk = false;
+        
+        // 2x2로 보면서 압축 여부 확인 및 개수 세기
+        for(int i = 0 ; i < arr.size() - 1; i+=2)
+        {
+            for(int j = 0 ; j < arr.size() - 1 ; j+=2)
+            {
+                // 압축이 가능한 경우
+                if(arr[i][j] == arr[i][j+1] && arr[i][j] == arr[i+1][j+1] && arr[i][j] == arr[i+1][j])
+                {
+                    if(arr[i][j] == 3) // 이미 압축이 불가능
+                    {
+                        modify[i/2][j/2] = 3;
+                        continue;
+                    }
+                    // 압축 가능
+                    chk = true;
+                    if(arr[i][j] == 0)
+                        modify[i/2][j/2] = 0;
+                    else if(arr[i][j] == 1)
+                        modify[i/2][j/2] = 1;
+                }
+                // 압축 불가능 할 경우, 압축할 배열에 3 대입 후 개수 세기
+                else
+                {
+                    // 개수 세기
+                    if(arr[i][j] == 1)
+                        cnt_1++;
+                    else if(arr[i][j] == 0)
+                        cnt_0++;
+
+                    if(arr[i+1][j] == 1)
+                        cnt_1++;
+                    else if(arr[i+1][j] == 0)
+                        cnt_0++;
+
+                    if(arr[i][j+1] == 1)
+                        cnt_1++;
+                    else if(arr[i][j+1] == 0)
+                        cnt_0++;
+
+                    if(arr[i+1][j+1] == 1)
+                        cnt_1++;
+                    else if(arr[i+1][j+1] == 0)
+                        cnt_0++;
+                
+                    modify[i/2][j/2] = 3;
+                }
+            }
+        }
+        // 압축 배열을 기존의 배열(arr)로 하고, 다시 압축할 배열 생
+        num = modify.size() / 2;
+        arr.clear();
+        arr = modify;
+        modify.clear();
+        modify.resize(num, vector<int>(num, 0));      
+ 
+    }
+    
+    answer[0] = cnt_0;
+    answer[1] = cnt_1;
+    return answer;
+}

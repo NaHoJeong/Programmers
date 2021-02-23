@@ -1,0 +1,19 @@
+//폰켓몬
+// 배열 정렬 후 중복되는 값 제거
+  // 주어진 폰켓몬의 개수 /2와 중복 제거 후 남은 폰켓몬의 개수를 비교하여 작은 수 만큼 뽑을 
+  
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+int solution(vector<int> nums)
+{
+    int answer = nums.size()/2;
+    sort(nums.begin(), nums.end());
+    nums.erase(unique(nums.begin(),nums.end()),nums.end());
+    
+    if(nums.size() < answer)
+        answer = nums.size();
+    return answer;
+}

@@ -1,0 +1,142 @@
+// 순위 검색
+// 주어진 정보를 보고 해당하는 정보에 점수 대입(총 16개, java, backend, senior, pizza가 주어지면, -backendseniorpizza, java-seniorpizza, ...에 같은 점수 대입)
+  // 각 정보의 점수는 vector<int>로 하며, 각각의 query에 해당하는 정보의 점수 벡터를 가져와 이분탐색으로 query의 점수 이상인 사람 수 추출
+    // 그냥 for문을 이용해 사람 수 탐색 시 시간초과
+    
+#include <string>
+#include <vector>
+#include <algorithm>
+#include <map>
+
+using namespace std;
+
+map<string, vector<int>> in;
+void ext(vector<string> info)
+{
+    vector<vector<string>> output;
+    vector<string> output_str;
+    int output_int = 0;
+ 
+    int ptr = 0;
+    int start = 0;
+    for(int i = 0 ; i < info.size() ; i++)
+    {
+        start = 0;
+        ptr = info[i].find(' ', 0);
+        while(ptr != string::npos)
+        {
+            if(info[i].substr(start, ptr - start) != "and")
+                output_str.push_back(info[i].substr(start, ptr - start));
+            output_str.push_back("-");
+            start = ptr + 1;
+            ptr = info[i].find(' ', start);
+            
+            output.push_back(output_str);
+            output_str.clear();
+        }
+        output_int = stoi(info[i].substr(start, info[i].length() - start));
+        
+        // 각 정보에 따른 점수 대입(총 16개이며, 추후에 수정하기!!!!)
+        string temp = "";
+        temp = output[0][0] + output[1][0] + output[2][0] + output[3][0];
+        in[temp].push_back(output_int);
+        temp = output[0][1] + output[1][1] + output[2][1] + output[3][1];
+        in[temp].push_back(output_int);
+        
+        temp = output[0][0] + output[1][0] + output[2][0] + output[3][1];
+        in[temp].push_back(output_int);
+        temp = output[0][0] + output[1][0] + output[2][1] + output[3][0];
+        in[temp].push_back(output_int);
+        temp = output[0][0] + output[1][1] + output[2][0] + output[3][0];
+        in[temp].push_back(output_int);
+        temp = output[0][1] + output[1][0] + output[2][0] + output[3][0];
+        in[temp].push_back(output_int);
+        
+        temp = output[0][0] + output[1][0] + output[2][1] + output[3][1];
+        in[temp].push_back(output_int);
+        temp = output[0][0] + output[1][1] + output[2][0] + output[3][1];
+        in[temp].push_back(output_int);
+        temp = output[0][1] + output[1][0] + output[2][0] + output[3][1];
+        in[temp].push_back(output_int);
+        
+        temp = output[0][0] + output[1][1] + output[2][1] + output[3][0];
+        in[temp].push_back(output_int);
+        temp = output[0][1] + output[1][0] + output[2][1] + output[3][0];
+        in[temp].push_back(output_int);
+        
+        temp = output[0][1] + output[1][1] + output[2][0] + output[3][0];
+        in[temp].push_back(output_int);
+        
+        temp = output[0][0] + output[1][1] + output[2][1] + output[3][1];
+        in[temp].push_back(output_int);
+        temp = output[0][1] + output[1][0] + output[2][1] + output[3][1];
+        in[temp].push_back(output_int);
+        
+        temp = output[0][1] + output[1][1] + output[2][0] + output[3][1];
+        in[temp].push_back(output_int);
+        temp = output[0][1] + output[1][1] + output[2][1] + output[3][0];
+        in[temp].push_back(output_int);
+        
+        output.clear();
+        output_int = 0;
+    }
+}
+
+vector<int> solution(vector<string> info, vector<string> query) {
+    vector<int> answer;
+    
+    // 주어진 정보에 따라 모든 정보에 점수 대입
+    ext(info);
+    
+    // 모든 정보의 점수를 오름차순
+    for(auto iter = in.begin() ; iter != in.end() ; iter++)
+        sort(iter->second.begin(), iter->second.end());
+    
+    // query에 주어진 정보와 점수 추출
+    string output_str = "";
+    string output_int = "";
+    
+    string query_str = "";
+    int ptr = 0;
+    int start = 0;
+    for(int i = 0 ; i < query.size() ; i++)
+    {
+        start = 0;
+        query_str = query[i];
+        ptr = query_str.find(' ', 0);
+        // query의 정보, and는 삭제
+        while(ptr != string::npos)
+        {
+            if(query_str.substr(start, ptr - start) != "and")
+                output_str += query_str.substr(start, ptr - start);
+            start = ptr + 1;
+            ptr = query_str.find(' ', start);
+        }
+        output_int = query_str.substr(start, query_str.length() - start); // query 점수
+        
+        // 각 query에 맞는 정보를 가지고 이분탐색하여 query 점수보다 높은 사람 수 판별
+        int start = 0;
+        int end = in[output_str].size() - 1;
+        int cnt = 0, mid = 0;
+        while(start <= end)
+        {
+            mid = (start + end) /2;
+            
+            if(in[output_str][mid] < stoi(output_int))
+            {
+                start = mid + 1;
+            }
+            else 
+            {
+                cnt = in[output_str].size() - mid; // 오름차순이므로, 해당 값보다 위에 있는 점수가 더 높은 점수
+                end = mid - 1;
+            }
+        }
+        answer.push_back(cnt);
+        
+        output_str = "";
+        output_int = "";
+    }
+    
+    return answer;
+}

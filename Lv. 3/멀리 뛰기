@@ -1,0 +1,29 @@
+// 멀리 뛰기
+// 규칙 찾기 -> 피보나치 수열, n칸의 경우, n-2칸 뛸 때의 경우의 수에 2칸 뛰는 것에 n-1칸 뛸 때의 경우의 수에 1칸 뛰는 것!!
+    // n-2칸 뛸 때의 경우의 수에 1칸 씩 2칸 뛰는게 안되는 이유는 n-1칸 뛸 때의 경우의 수에 다 합쳐져있으므로
+
+#include <string>
+#include <vector>
+
+using namespace std;
+
+long long solution(int n) {
+    long long answer = 0;
+    
+    int step_1 = 1;
+    int step_2 = 2;
+    
+    if(n == 1)
+        return step_1;
+    else if(n == 2)
+        return step_2;
+    
+    for(int i = 3 ; i <= n ; i++)
+    {
+        answer = (step_1 % 1234567 +  step_2 % 1234567) % 1234567;
+        step_1 =  step_2 % 1234567;
+        step_2 = answer % 1234567;
+    }
+    
+    return answer;
+}

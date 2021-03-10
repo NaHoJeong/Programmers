@@ -1,0 +1,86 @@
+// 징검다리 건너기
+// 이진 탐색을 통한 풀이(효율성)
+
+#include <string>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+int solution(vector<int> stones, int k) {
+    int answer = 0;
+    
+    int max_val = 0;
+    int min_val = 200000001;
+    
+    // 징검다리의 최소와 최대값 계산
+    for(int i = 0 ; i < stones.size() ; i++)
+    {
+        if(max_val < stones[i])
+            max_val = stones[i];
+        if(min_val > stones[i])
+            min_val = stones[i];
+    }
+    answer = max_val;
+    
+    // k가 1이라면 답은 징검다리의 최소값
+    if(k == 1)
+    {
+        answer = min_val;
+        return answer;
+    }
+    
+    // 이진 탐색을 위한 중간 값 설정
+    int mid = (max_val + min_val) / 2;
+    
+    int cnt = 1;
+    bool chk = false;
+    while(max_val >= min_val)
+    {
+        cnt = 1;
+        mid = (max_val + min_val) / 2;
+        // k값을 토대로 이동할 수 있는지 판단
+        for(int i = 0 ; i < stones.size() - 1; i++)
+        {
+            // 0과 0이 이어졌다면 cnt++
+            if(stones[i] <= mid && stones[i + 1] <= mid )
+                cnt++;
+            else
+                cnt = 1;
+            
+            // 이동할 수 있다면 정답의 후보이며, 다음 값 탐색
+            if(cnt == k)
+            {
+                if(answer > mid)
+                    answer = mid;
+                chk = true;
+                break;
+            }
+        }
+        // chk가 true이면 정답의 후보이므로 더 큰 값 탐색
+        if(chk == true)
+            max_val = mid - 1;
+        // chk가 false이면 정답이 될 수 없으므로 더 작은 값 
+        else
+            min_val = mid + 1;
+        chk = false;
+    }
+    
+    // for문을 이용해 처음부터 끝까지 k개로 묶으며 그 중 큰 값을 추출(묶음 별로 얼마나 많은 아이들이 지나갈 수 있는지 판단)
+    // 큰 값들 중 가장 작은 값을 답으로
+      // 효율성 문제, 시간초과
+    /*
+    int max_val = 0;
+    for(int i = 0 ; i <= stones.size() - k ; i++)
+    {
+        max_val = 0;
+        for(int j = i ; j < i+k ; j++)
+            if(max_val < stones[j])
+                max_val = stones[j];
+        
+        if(answer > max_val)
+            answer = max_val;
+    }
+    */
+    return answer;
+}

@@ -1,0 +1,61 @@
+// 스티커 모으기 2
+// DP 이용
+  // 처음에 DP를 위한 2차원 벡터 선언(sticker.size(), 2의 크기) 후 문제를 풀었는데 시간초과 -> 1차원 벡터(sticker.size() 크기)를 2개 선언하여 실행
+  // 0번 째 스티커를 포함하는 경우와 1번 째 스티커를 포함하는 경우로 나눠서 풀이
+  
+#include <iostream>
+#include <vector>
+using namespace std;
+
+int solution(vector<int> sticker)
+{
+    int answer = 0;
+    
+    // sticker 사이즈가 1과 2일 때 예외처리
+    if(sticker.size() == 1)
+        return sticker[0];
+    else if(sticker.size() == 2)
+    {
+        if(sticker[0] > sticker[1])
+            return sticker[0];
+        else
+            return sticker[1];
+    }
+    
+    // sticker 사이즈가 3 이상 일 때
+    vector<int> dp1(sticker.size(), 0); // 0번 째 스티커를 포함할 경우
+    vector<int> dp2(sticker.size(), 0); // 1번 째 스티커를 포함할 경우
+    
+    dp1[0] = sticker[0]; // 0번 째 스티커를 포함하므로 
+    dp1[1] = dp1[0]; // 0번 째 스티커를 포함하면, 1번째 스티커는 무시 -> 0번 째, 1번 째 벡터 모두 0번 째 스티커 숫자
+    dp2[1] = sticker[1]; // 1번 째 스키커 포함이므로 0번 째 벡터의 값은 0, 1번째 벡터의 값은 1번 째 스티커 숫자
+
+    // 자신의 이전 값과 자신의 값+전전 값의 비교를 통해 진행하면서 최대의 값 계싼
+    for(int i = 2; i < sticker.size() ; i++)
+    {
+        if(dp2[i-1] > sticker[i] + dp2[i-2])
+            dp2[i] = dp2[i-1];
+        else
+            dp2[i] = sticker[i]+dp2[i-2];
+        
+        if(i != sticker.size() - 1)
+        {
+            if(dp1[i-1] > sticker[i] + dp1[i-2])
+                dp1[i] = dp1[i-1];
+            else
+                dp1[i] = sticker[i]+dp1[i-2];
+        }
+        if(dp1[i] < dp2[i])
+        {
+            if(answer < dp2[i])
+                answer = dp2[i];
+        }
+        else
+        {
+            if(answer < dp1[i])
+                answer = dp1[i];
+        }
+    }
+   
+    return answer;
+}

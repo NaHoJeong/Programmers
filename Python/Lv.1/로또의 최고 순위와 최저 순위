@@ -1,0 +1,30 @@
+
+# 2021 Dev-Matching 레벨 1 로또의 최고 순위와 최저 순위
+
+def solution(lottos, win_nums):
+    answer = []
+
+    cnt_0 = 0
+    cnt_win = 0
+    for i in lottos:
+        if i in win_nums:
+            cnt_win += 1
+        elif i == 0:
+            cnt_0 += 1
+
+    lv_min = 7 - (cnt_0+cnt_win)
+    lv_max = 7 - cnt_win
+    if lv_min > 6:
+        lv_min = 6
+    if lv_max > 6:
+        lv_max = 6
+
+    answer.append(lv_min)
+    answer.append(lv_max)
+    return answer
+
+
+
+print(solution([44, 1, 0, 0, 31, 25], [31, 10, 45, 1, 6, 19]))
+print(solution([0, 0, 0, 0, 0, 0], [38, 19, 20, 40, 15, 25]))
+print(solution([45, 4, 35, 20, 3, 9], [20, 9, 3, 45, 4, 35]))

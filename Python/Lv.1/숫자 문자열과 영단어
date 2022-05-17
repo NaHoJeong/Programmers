@@ -1,0 +1,25 @@
+
+# 2021 카카오 채용연계형 인턴십 레벨 1 숫자 문자열과 영단어
+
+def solution(s):
+    answer = 0
+    str_ans = ''
+    ind = 0
+    temp_str = ''
+    numbers = {'zero': '0','one': '1','two': '2','three': '3','four': '4','five': '5','six': '6','seven': '7','eight': '8','nine': '9'}
+
+    while(ind < len(s)):
+        if ord(s[ind]) >= 48 and ord(s[ind]) <= 57:
+            str_ans += s[ind]
+        else:
+            temp_str += s[ind]
+            if temp_str in numbers:
+                str_ans += numbers[temp_str]
+                temp_str = ''
+        ind += 1
+
+    answer = int(str_ans)
+    return answer
+
+print(solution("onetwo"))
+print(solution("95"))

@@ -1,0 +1,28 @@
+
+# 위클리 챌린지 레벨 1 최소직사각형
+
+def solution(sizes):
+    answer = 0
+    
+    # 각 명함의 두 변의 길이 중 긴 부분의 집합과 짧은 부분의 집합 중
+    # 가장 큰 값의 곱을 지갑의 크기로 하면 가능
+    
+    line_1 = 0
+    line_2 = 0
+    
+    for i in range(len(sizes)):
+        temp = min(sizes[i][0], sizes[i][1])
+        if line_1 < temp:
+            line_1 = temp
+            
+        temp = max(sizes[i][0], sizes[i][1])
+        if line_2 < temp:
+            line_2 = temp
+    
+    answer = line_1 * line_2
+    return answer
+    
+    
+    print(solution([[60, 50], [30, 70], [60, 30], [80, 40]]))
+    print(solution([[10, 7], [12, 3], [8, 15], [14, 7], [5, 15]]))
+    print(solution([[14, 4], [19, 6], [6, 16], [18, 7], [7, 11]]))

@@ -1,11 +1,10 @@
 
 # 위클리 챌린지 레벨 1 최소직사각형
-
-def solution(sizes):
-    answer = 0
-    
     # 각 명함의 두 변의 길이 중 긴 부분의 집합과 짧은 부분의 집합 중
     # 가장 큰 값의 곱을 지갑의 크기로 하면 가능
+    
+def solution(sizes):
+    answer = 0
     
     line_1 = 0
     line_2 = 0

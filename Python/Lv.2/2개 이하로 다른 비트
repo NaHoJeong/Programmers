@@ -1,0 +1,35 @@
+
+# 월간 코드 챌린지 시즌 2_레벨 2_2개 이하로 다른 비트
+### 십진수를 이진수로 바꾼 뒤 0이 되는 가장 작은 자리 수 탐색
+### 0이 되는 부분을 1로 바꿔주며, 그 바로 아래의 값은 1일 것이므로 이를 0으로 바꾼 뒤 십진수로 변환
+
+def dec_to_bin(num):
+    num_bi =[]
+    while(num > 0):
+        num_bi.append(num%2)
+        num //= 2
+    num_bi.append(0)
+    return num_bi
+
+def bin_to_dec(num):
+    val = 1
+    number = 0
+    chk = False
+    for i in num:
+        number += val * i
+        if i == 0 and chk == False:
+            chk = True
+            number += val - val//2
+        val *= 2
+    return number
+
+def solution(numbers):
+    answer = []
+    num_bi = []
+    for i in numbers:
+        num_bi = dec_to_bin(i)
+        answer.append(bin_to_dec(num_bi))
+
+    return answer
+
+print(solution([3]))

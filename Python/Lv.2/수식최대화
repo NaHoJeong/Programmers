@@ -1,0 +1,65 @@
+
+# 2020카카오 인턴십 레벨 2 수식최대화
+
+def mid_val(num, op1):
+    temp = 0
+    num1 = []
+    num1.append(num[0])
+    for i in range(1, len(num) - 1, 2):
+        if num[i] == op1:
+            temp = operator(num1[len(num1)-1], num[i+1], op1)
+            num1.pop()
+            num1.append(temp)
+        else:
+            num1.append(num[i])
+            num1.append(num[i + 1])
+    return num1
+
+def operator(num1, num2, op):
+    if op == '*':
+        return num1 * num2
+    elif op == '+':
+        return num1 + num2
+    else:
+        return num1 - num2
+
+def extract(expression):
+    start = 0
+    operator = ['-', '+', '*']
+    num = []
+    
+    for i in range(len(expression)):
+        if expression[i] in operator:
+            num.append(int(expression[start:i]))
+            num.append(expression[i])
+            start = i + 1
+    num.append(int(expression[start:]))
+    
+    return num
+    
+def calculate(num, op1, op2, op3):
+    ans = 0
+    temp = 0
+    num = mid_val(num, op1)
+    num = mid_val(num, op2)
+    num= mid_val(num, op3)
+
+    ans = int(num[0])
+    return ans
+
+def solution(expression):
+    answer = 0
+    num = []
+    num = extract(expression)
+    answer = max(answer, abs(calculate(num, '*','-','+')))
+    answer = max(answer, abs(calculate(num, '*','+','-')))
+    answer = max(answer, abs(calculate(num, '-','+','*')))
+    answer = max(answer, abs(calculate(num, '-','*','+')))
+    answer = max(answer, abs(calculate(num, '+','-','*')))
+    answer = max(answer, abs(calculate(num, '+','*','-')))
+    
+    return answer
+    
+    
+  print(solution("100-200*300-500+20"))
+  print(solution("50*6-3*2"))

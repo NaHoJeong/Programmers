@@ -1,0 +1,25 @@
+
+# 연습문제 정렬 레벨 2 가장 큰 수
+
+from functools import cmp_to_key
+
+def compare(a, b):
+    int_a = int(str(a) + str(b))
+    int_b = int(str(b) + str(a))
+
+    if int_a > int_b:
+        return -1
+    else:
+        return 1
+
+def solution(numbers):
+    answer = ''
+
+    numbers = sorted(numbers, key=cmp_to_key(compare))
+
+    if numbers[0] == 0:
+        return '0'
+
+    for i in numbers:
+        answer += str(i)
+    return answer
